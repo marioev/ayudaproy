@@ -63,8 +63,3 @@
       	</div>
     </div>
 </div>
-<?php
-$string = "cadena.php";
-$resultado = explode(".", $string);
-print_r($resultado);
-?>

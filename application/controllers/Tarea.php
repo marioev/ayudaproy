@@ -67,7 +67,7 @@ class Tarea extends CI_Controller{
                 $img_data = $this->upload->data();
                 $extension = $img_data['file_ext'];
                 /* ********************INICIO para resize***************************** */
-                if ($img_data['file_ext'] == ".jpg" || $img_data['file_ext'] == ".png" || $img_data['file_ext'] == ".jpeg" || $img_data['file_ext'] == ".gif") {
+                /*if ($img_data['file_ext'] == ".jpg" || $img_data['file_ext'] == ".png" || $img_data['file_ext'] == ".jpeg" || $img_data['file_ext'] == ".gif") {
                     $conf['image_library'] = 'gd2';
                     $conf['source_image'] = $img_data['full_path'];
                     $conf['new_image'] = './resources/imagenes/tarearchivo/';
@@ -79,8 +79,8 @@ class Tarea extends CI_Controller{
                     $this->image_lib->initialize($conf);
                     if(!$this->image_lib->resize()){
                         echo $this->image_lib->display_errors('','');
-                    }
-                    $confi['image_library'] = 'gd2';
+                    }*/
+                    /*$confi['image_library'] = 'gd2';
                     $confi['source_image'] = './resources/imagenes/tarearchivo/'.$new_name.$extension;
                     $confi['new_image'] = './resources/imagenes/tarearchivo/'."thumb_".$new_name.$extension;
                     $confi['create_thumb'] = FALSE;
@@ -90,8 +90,8 @@ class Tarea extends CI_Controller{
 
                     $this->image_lib->clear();
                     $this->image_lib->initialize($confi);
-                    $this->image_lib->resize();
-                }
+                    $this->image_lib->resize();*/
+               // }
                 /* ********************F I N  para resize***************************** */
                 $imagenarch = $new_name.$extension;
             }
@@ -158,7 +158,7 @@ class Tarea extends CI_Controller{
                     $img_data = $this->upload->data();
                     $extension = $img_data['file_ext'];
                     /* ********************INICIO para resize***************************** */
-                    if($img_data['file_ext'] == ".jpg" || $img_data['file_ext'] == ".png" || $img_data['file_ext'] == ".jpeg" || $img_data['file_ext'] == ".gif") {
+                    /*if($img_data['file_ext'] == ".jpg" || $img_data['file_ext'] == ".png" || $img_data['file_ext'] == ".jpeg" || $img_data['file_ext'] == ".gif") {
                         $conf['image_library'] = 'gd2';
                         $conf['source_image'] = $img_data['full_path'];
                         $conf['new_image'] = './resources/imagenes/tarearchivo/';
@@ -170,8 +170,8 @@ class Tarea extends CI_Controller{
                         $this->image_lib->initialize($conf);
                         if(!$this->image_lib->resize()){
                             echo $this->image_lib->display_errors('','');
-                        }
-                        
+                        }*/
+                        /*
                         $confi['image_library'] = 'gd2';
                         $confi['source_image'] = './resources/imagenes/tarearchivo/'.$new_name.$extension;
                         $confi['new_image'] = './resources/imagenes/tarearchivo/'."thumb_".$new_name.$extension;
@@ -182,17 +182,17 @@ class Tarea extends CI_Controller{
 
                         $this->image_lib->clear();
                         $this->image_lib->initialize($confi);
-                        $this->image_lib->resize();
-                    }
+                        $this->image_lib->resize();*/
+                   // }
                     /* ********************F I N  para resize***************************** */
                     $directorio = FCPATH.'resources\imagenes\tarearchivo\\';
                     if(isset($imagenarch1) && !empty($imagenarch1)){
                       if(file_exists($directorio.$imagenarch1)){
                           unlink($directorio.$imagenarch1);
-                          $mimagenthumb = "thumb_".$imagenarch1;
+                          /*$mimagenthumb = "thumb_".$imagenarch1;
                           if($img_data['file_ext'] == ".jpg" || $img_data['file_ext'] == ".png" || $img_data['file_ext'] == ".jpeg" || $img_data['file_ext'] == ".gif") {
                               unlink($directorio.$mimagenthumb);
-                          }
+                          }*/
                       }
                   }
                     $imagenarch = $new_name.$extension;
@@ -242,12 +242,12 @@ class Tarea extends CI_Controller{
             if(isset($tarea['tarea_archivo']) && !empty($tarea['tarea_archivo'])){
                 if(file_exists($directorio.$tarea['tarea_archivo'])){
                     unlink($directorio.$tarea['tarea_archivo']);
-                    $mimagenthumb = "thumb_".$tarea['tarea_archivo'];
+                    /*$mimagenthumb = "thumb_".$tarea['tarea_archivo'];
                     
                     $resultado = explode(".", $tarea['tarea_archivo']);
                     if($resultado[1] == "jpg" || $resultado[1] == "png" || $resultado[1] == "jpeg" || $resultado[1] == "gif") {
                         unlink($directorio.$mimagenthumb);
-                    }
+                    }*/
                 }
             }
             $this->Tarea_model->delete_tarea($tarea_id);
