@@ -53,4 +53,11 @@ class Tarea_model extends CI_Model
     {
         return $this->db->delete('tarea',array('tarea_id'=>$tarea_id));
     }
+    /* retorna las tareas de un determinado grupo */
+    function get_all_tareagrupo($grupo_id)
+    {
+        $this->db->where('grupo_id', $grupo_id);
+        $this->db->order_by('tarea_id', 'desc');
+        return $this->db->get('tarea')->result_array();
+    }
 }

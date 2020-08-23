@@ -23,7 +23,7 @@
 						<td>
                             <a href="<?php echo site_url('grupo/edit/'.$g['grupo_id']); ?>" class="btn btn-info btn-xs"><span class="fa fa-pencil"></span> Editar</a> 
                             <a href="<?php echo site_url('estudiante/grupo/'.$g['grupo_id']); ?>" class="btn btn-facebook btn-xs"><span class="fa fa-users"></span> Estudiantes</a> 
-                            <a href="<?php echo site_url('tarea/grupo/'.$g['grupo_id']); ?>" class="btn btn-success btn-xs"><span class="fa fa-book"></span> Trabajos/Material</a> 
+                            <a href="<?php echo site_url('tarea/tgrupo/'.$g['grupo_id']); ?>" class="btn btn-success btn-xs"><span class="fa fa-book"></span> Trabajos/Material</a> 
                             <a href="<?php echo site_url('video/grupo/'.$g['grupo_id']); ?>" class="btn btn-danger btn-xs"><span class="fa fa-television"></span> Videos</a> 
                           
                         </td>

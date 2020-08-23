@@ -14,40 +14,111 @@ class Tarea extends CI_Controller{
     /*
      * Listing of tarea
      */
-    function index()
+    function tgrupo($grupo_id)
+    {   
+        // check if the tarea exists before trying to edit it
+        $this->load->model('Grupo_model');
+        $data['grupo'] = $this->Grupo_model->get_grupo($grupo_id);
+        
+        if(isset($data['grupo']['grupo_id']))
+        {
+            //$this->load->model('Grupo_model');
+            $data['all_tarea'] = $this->Tarea_model->get_all_tareagrupo($grupo_id);
+                $data['_view'] = 'tarea/tgrupo';
+                $this->load->view('layouts/main',$data);
+            
+        }else
+            show_error('El grupo seleccionado no existe.');
+    } 
+    /*function index()
     {
         $data['tarea'] = $this->Tarea_model->get_all_tarea();
         
         $data['_view'] = 'tarea/index';
         $this->load->view('layouts/main',$data);
-    }
+    }*/
 
     /*
      * Adding a new tarea
      */
-    function add()
-    {   
+    function add($grupo_id)
+    {
         if(isset($_POST) && count($_POST) > 0)     
-        {   
+        {
+            /* *********************INICIO imagen***************************** */
+            $imagenarch="";
+            if (!empty($_FILES['tarea_archivo']['name'])){
+                $this->load->library('image_lib');
+                $config['upload_path'] = './resources/imagenes/tarearchivo/';
+                $img_full_path = $config['upload_path'];
+                $config['allowed_types'] = '*';
+                $config['image_library'] = 'gd2';
+                $config['max_size'] = 0;
+                $config['max_width'] = 0;
+                $config['max_height'] = 0;
+
+                $new_name = time();
+                $config['file_name'] = $new_name;
+                $config['file_ext_tolower'] = TRUE;
+
+                $this->load->library('upload', $config);
+                $this->upload->do_upload('tarea_archivo');
+
+                $img_data = $this->upload->data();
+                $extension = $img_data['file_ext'];
+                /* ********************INICIO para resize***************************** */
+                if ($img_data['file_ext'] == ".jpg" || $img_data['file_ext'] == ".png" || $img_data['file_ext'] == ".jpeg" || $img_data['file_ext'] == ".gif") {
+                    $conf['image_library'] = 'gd2';
+                    $conf['source_image'] = $img_data['full_path'];
+                    $conf['new_image'] = './resources/imagenes/tarearchivo/';
+                    $conf['maintain_ratio'] = TRUE;
+                    $conf['create_thumb'] = FALSE;
+                    $conf['width'] = 800;
+                    $conf['height'] = 600;
+                    $this->image_lib->clear();
+                    $this->image_lib->initialize($conf);
+                    if(!$this->image_lib->resize()){
+                        echo $this->image_lib->display_errors('','');
+                    }
+                    $confi['image_library'] = 'gd2';
+                    $confi['source_image'] = './resources/imagenes/tarearchivo/'.$new_name.$extension;
+                    $confi['new_image'] = './resources/imagenes/tarearchivo/'."thumb_".$new_name.$extension;
+                    $confi['create_thumb'] = FALSE;
+                    $confi['maintain_ratio'] = TRUE;
+                    $confi['width'] = 100;
+                    $confi['height'] = 100;
+
+                    $this->image_lib->clear();
+                    $this->image_lib->initialize($confi);
+                    $this->image_lib->resize();
+                }
+                /* ********************F I N  para resize***************************** */
+                $imagenarch = $new_name.$extension;
+            }
+            /* *********************FIN imagen***************************** */
+            date_default_timezone_set('America/La_Paz');
+            $fecha_hora = date('Y-m-d H:i:s');
             $params = array(
-				'grupo_id' => $this->input->post('grupo_id'),
-				'tarea_titulo' => $this->input->post('tarea_titulo'),
-				'tarea_archivo' => $this->input->post('tarea_archivo'),
-				'tarea_fecha' => $this->input->post('tarea_fecha'),
-				'tarea_hora' => $this->input->post('tarea_hora'),
-				'tarea_fechaentrega' => $this->input->post('tarea_fechaentrega'),
-				'tarea_fechahora' => $this->input->post('tarea_fechahora'),
-				'tarea_descripcion' => $this->input->post('tarea_descripcion'),
+                'grupo_id' => $grupo_id,
+                'tarea_titulo' => $this->input->post('tarea_titulo'),
+                'tarea_archivo' => $imagenarch,
+                'tarea_fecha' => $this->input->post('tarea_fecha'),
+                'tarea_hora' => $this->input->post('tarea_hora'),
+                'tarea_fechaentrega' => $this->input->post('tarea_fechaentrega'),
+                'tarea_fechahora' => $fecha_hora,
+                'tarea_descripcion' => $this->input->post('tarea_descripcion'),
             );
             
             $tarea_id = $this->Tarea_model->add_tarea($params);
-            redirect('tarea/index');
+            redirect('tarea/tgrupo/'.$grupo_id);
         }
         else
         {
-			$this->load->model('Grupo_model');
-			$data['all_grupo'] = $this->Grupo_model->get_all_grupo();
-            
+            /*
+            $this->load->model('Grupo_model');
+            $data['all_grupo'] = $this->Grupo_model->get_all_grupo();
+            */
+            $data['grupo_id'] = $grupo_id;
             $data['_view'] = 'tarea/add';
             $this->load->view('layouts/main',$data);
         }
@@ -56,7 +127,7 @@ class Tarea extends CI_Controller{
     /*
      * Editing a tarea
      */
-    function edit($tarea_id)
+    function edit($tarea_id, $grupo_id)
     {   
         // check if the tarea exists before trying to edit it
         $data['tarea'] = $this->Tarea_model->get_tarea($tarea_id);
@@ -64,25 +135,90 @@ class Tarea extends CI_Controller{
         if(isset($data['tarea']['tarea_id']))
         {
             if(isset($_POST) && count($_POST) > 0)     
-            {   
+            {
+                /* *********************INICIO imagen***************************** */
+                $imagenarch="";
+                    $imagenarch1= $this->input->post('tarea_archivo1');
+                if (!empty($_FILES['tarea_archivo']['name']))
+                {
+                    $this->load->library('image_lib');
+                    $config['upload_path'] = './resources/imagenes/tarearchivo/';
+                    $config['allowed_types'] = '*';
+                    $config['max_size'] = 0;
+                    $config['max_width'] = 0;
+                    $config['max_height'] = 0;
+
+                    $new_name = time();
+                    $config['file_name'] = $new_name;
+                    $config['file_ext_tolower'] = TRUE;
+
+                    $this->load->library('upload', $config);
+                    $this->upload->do_upload('tarea_archivo');
+
+                    $img_data = $this->upload->data();
+                    $extension = $img_data['file_ext'];
+                    /* ********************INICIO para resize***************************** */
+                    if($img_data['file_ext'] == ".jpg" || $img_data['file_ext'] == ".png" || $img_data['file_ext'] == ".jpeg" || $img_data['file_ext'] == ".gif") {
+                        $conf['image_library'] = 'gd2';
+                        $conf['source_image'] = $img_data['full_path'];
+                        $conf['new_image'] = './resources/imagenes/tarearchivo/';
+                        $conf['maintain_ratio'] = TRUE;
+                        $conf['create_thumb'] = FALSE;
+                        $conf['width'] = 800;
+                        $conf['height'] = 600;
+                        $this->image_lib->clear();
+                        $this->image_lib->initialize($conf);
+                        if(!$this->image_lib->resize()){
+                            echo $this->image_lib->display_errors('','');
+                        }
+                        
+                        $confi['image_library'] = 'gd2';
+                        $confi['source_image'] = './resources/imagenes/tarearchivo/'.$new_name.$extension;
+                        $confi['new_image'] = './resources/imagenes/tarearchivo/'."thumb_".$new_name.$extension;
+                        $confi['create_thumb'] = FALSE;
+                        $confi['maintain_ratio'] = TRUE;
+                        $confi['width'] = 100;
+                        $confi['height'] = 100;
+
+                        $this->image_lib->clear();
+                        $this->image_lib->initialize($confi);
+                        $this->image_lib->resize();
+                    }
+                    /* ********************F I N  para resize***************************** */
+                    $directorio = FCPATH.'resources\imagenes\tarearchivo\\';
+                    if(isset($imagenarch1) && !empty($imagenarch1)){
+                      if(file_exists($directorio.$imagenarch1)){
+                          unlink($directorio.$imagenarch1);
+                          $mimagenthumb = "thumb_".$imagenarch1;
+                          if($img_data['file_ext'] == ".jpg" || $img_data['file_ext'] == ".png" || $img_data['file_ext'] == ".jpeg" || $img_data['file_ext'] == ".gif") {
+                              unlink($directorio.$mimagenthumb);
+                          }
+                      }
+                  }
+                    $imagenarch = $new_name.$extension;
+                }else{
+                    $imagenarch = $imagenarch1;
+                }
+            /* *********************FIN imagen***************************** */
+                //$fechahora_creacion = date("Y-m-d H:i:s", strtotime($this->input->post('tarea_fechahora')));
                 $params = array(
-					'grupo_id' => $this->input->post('grupo_id'),
-					'tarea_titulo' => $this->input->post('tarea_titulo'),
-					'tarea_archivo' => $this->input->post('tarea_archivo'),
-					'tarea_fecha' => $this->input->post('tarea_fecha'),
-					'tarea_hora' => $this->input->post('tarea_hora'),
-					'tarea_fechaentrega' => $this->input->post('tarea_fechaentrega'),
-					'tarea_fechahora' => $this->input->post('tarea_fechahora'),
-					'tarea_descripcion' => $this->input->post('tarea_descripcion'),
+                    'grupo_id' => $this->input->post('grupo_id'),
+                    'tarea_titulo' => $this->input->post('tarea_titulo'),
+                    'tarea_archivo' => $imagenarch,
+                    'tarea_fecha' => $this->input->post('tarea_fecha'),
+                    'tarea_hora' => $this->input->post('tarea_hora'),
+                    'tarea_fechaentrega' => $this->input->post('tarea_fechaentrega'),
+                    //'tarea_fechahora' => $this->input->post('tarea_fechahora'),
+                    'tarea_descripcion' => $this->input->post('tarea_descripcion'),
                 );
 
                 $this->Tarea_model->update_tarea($tarea_id,$params);            
-                redirect('tarea/index');
+                redirect('tarea/tgrupo/'.$this->input->post('grupo_id'));
             }
             else
             {
-				$this->load->model('Grupo_model');
-				$data['all_grupo'] = $this->Grupo_model->get_all_grupo();
+                $this->load->model('Grupo_model');
+                $data['all_grupo'] = $this->Grupo_model->get_all_grupo();
 
                 $data['_view'] = 'tarea/edit';
                 $this->load->view('layouts/main',$data);
@@ -102,11 +238,23 @@ class Tarea extends CI_Controller{
         // check if the tarea exists before trying to delete it
         if(isset($tarea['tarea_id']))
         {
+            $directorio = FCPATH.'resources\imagenes\tarearchivo\\';
+            if(isset($tarea['tarea_archivo']) && !empty($tarea['tarea_archivo'])){
+                if(file_exists($directorio.$tarea['tarea_archivo'])){
+                    unlink($directorio.$tarea['tarea_archivo']);
+                    $mimagenthumb = "thumb_".$tarea['tarea_archivo'];
+                    
+                    $resultado = explode(".", $tarea['tarea_archivo']);
+                    if($resultado[1] == "jpg" || $resultado[1] == "png" || $resultado[1] == "jpeg" || $resultado[1] == "gif") {
+                        unlink($directorio.$mimagenthumb);
+                    }
+                }
+            }
             $this->Tarea_model->delete_tarea($tarea_id);
-            redirect('tarea/index');
+            redirect('tarea/tgrupo/'.$tarea['grupo_id']);
         }
         else
-            show_error('The tarea you are trying to delete does not exist.');
+            show_error('la Tarea que intentas eliminar no existe.');
     }
     
 }

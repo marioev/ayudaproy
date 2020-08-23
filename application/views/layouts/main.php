@@ -101,11 +101,11 @@
                                 <i class="fa fa-list-alt"></i> <span>Grupos</span>
                             </a>
                         </li>
-						<li>
-                            <a href="<?php echo site_url('tarea/index');?>">
+                        <!--<li>
+                            <a href="<?php //echo site_url('tarea/index');?>">
                                 <i class="fa fa-files-o"></i> <span>Tareas</span>
                             </a>
-                        </li>
+                        </li>-->
 						<li>
                             <a href="<?php echo site_url('tarea_estudiante/index');?>">
                                 <i class="fa fa-file-text"></i> <span>Tarea Estudiante</span>
